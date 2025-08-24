@@ -1056,10 +1056,154 @@ export default function MLAlgorithms() {
                   </div>
                 )}
 
-                {/* BACKPROPAGATION VISUALIZATION */}
-                {selectedAlgorithm === "backprop" && (
-                  <div className="h-96 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg p-6">
+              {/* BACKPROPAGATION VISUALIZATION WITH METRICS */}
+              {selectedAlgorithm === "backprop" && (
+                <div className="space-y-4">
+                  {/* Metrics Dashboard */}
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                    {/* Loss Metric */}
+                    <div className="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-950 dark:to-red-900 p-4 rounded-lg border border-red-200 dark:border-red-800">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-red-700 dark:text-red-300">Loss</p>
+                          <p className="text-2xl font-bold text-red-900 dark:text-red-100">
+                            {(() => {
+                              const step = backpropSteps.find(s => s.layer === 3 && s.type === "forward");
+                              const output = step?.values[0] || 0;
+                              const target = 0.8; // Example target
+                              const loss = Math.pow(output - target, 2);
+                              return loss.toFixed(4);
+                            })()}
+                          </p>
+                        </div>
+                        <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+                          <span className="text-white text-sm font-bold">L</span>
+                        </div>
+                      </div>
+                      <div className="mt-2">
+                        <div className="w-full bg-red-200 dark:bg-red-800 rounded-full h-2">
+                          <div 
+                            className="bg-red-600 dark:bg-red-400 h-2 rounded-full transition-all duration-300"
+                            style={{ 
+                              width: `${Math.min(100, (((() => {
+                                const step = backpropSteps.find(s => s.layer === 3 && s.type === "forward");
+                                const output = step?.values[0] || 0;
+                                const target = 0.8;
+                                return Math.pow(output - target, 2);
+                              })()) * 100))}%` 
+                            }}
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Learning Rate Metric */}
+                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-blue-700 dark:text-blue-300">Learning Rate</p>
+                          <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">0.001</p>
+                        </div>
+                        <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                          <span className="text-white text-sm font-bold">α</span>
+                        </div>
+                      </div>
+                      <div className="mt-2">
+                        <div className="w-full bg-blue-200 dark:bg-blue-800 rounded-full h-2">
+                          <div className="bg-blue-600 dark:bg-blue-400 h-2 rounded-full w-1/4"></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Gradient Norm Metric */}
+                    <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Gradient Norm</p>
+                          <p className="text-2xl font-bold text-purple-900 dark:text-purple-100">
+                            {(() => {
+                              let totalGradientSquared = 0;
+                              backpropSteps.filter(s => s.type === "backward").forEach(step => {
+                                step.gradients?.forEach(grad => {
+                                  totalGradientSquared += grad * grad;
+                                });
+                              });
+                              return Math.sqrt(totalGradientSquared).toFixed(4);
+                            })()}
+                          </p>
+                        </div>
+                        <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                          <span className="text-white text-sm font-bold">∇</span>
+                        </div>
+                      </div>
+                      <div className="mt-2">
+                        <div className="w-full bg-purple-200 dark:bg-purple-800 rounded-full h-2">
+                          <div 
+                            className="bg-purple-600 dark:bg-purple-400 h-2 rounded-full transition-all duration-300"
+                            style={{ 
+                              width: `${Math.min(100, (((() => {
+                                let totalGradientSquared = 0;
+                                backpropSteps.filter(s => s.type === "backward").forEach(step => {
+                                  step.gradients?.forEach(grad => {
+                                    totalGradientSquared += grad * grad;
+                                  });
+                                });
+                                return Math.sqrt(totalGradientSquared);
+                              })()) * 20))}%` 
+                            }}
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Weight Updates Metric */}
+                    <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 p-4 rounded-lg border border-green-200 dark:border-green-800">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-green-700 dark:text-green-300">Weight Updates</p>
+                          <p className="text-2xl font-bold text-green-900 dark:text-green-100">
+                            {(() => {
+                              const learningRate = 0.001;
+                              let totalWeightUpdate = 0;
+                              backpropSteps.filter(s => s.type === "backward").forEach(step => {
+                                step.gradients?.forEach(grad => {
+                                  totalWeightUpdate += Math.abs(learningRate * grad);
+                                });
+                              });
+                              return totalWeightUpdate.toFixed(4);
+                            })()}
+                          </p>
+                        </div>
+                        <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                          <span className="text-white text-sm font-bold">Δw</span>
+                        </div>
+                      </div>
+                      <div className="mt-2">
+                        <div className="w-full bg-green-200 dark:bg-green-800 rounded-full h-2">
+                          <div 
+                            className="bg-green-600 dark:bg-green-400 h-2 rounded-full transition-all duration-300"
+                            style={{ 
+                              width: `${Math.min(100, (((() => {
+                                const learningRate = 0.001;
+                                let totalWeightUpdate = 0;
+                                backpropSteps.filter(s => s.type === "backward").forEach(step => {
+                                  step.gradients?.forEach(grad => {
+                                    totalWeightUpdate += Math.abs(learningRate * grad);
+                                  });
+                                });
+                                return totalWeightUpdate;
+                              })()) * 1000))}%` 
+                            }}
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Neural Network Visualization */}
+                  <div className="h-96 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-950 rounded-lg p-6">
                     <svg className="w-full h-full" viewBox="0 0 800 300">
+                      
                       {/* Network architecture */}
                       {[2, 4, 4, 1].map((layerSize, layerIndex) => (
                         <g key={layerIndex}>
@@ -1069,12 +1213,12 @@ export default function MLAlgorithms() {
                             y={30}
                             width={60}
                             height={240}
-                            fill="rgba(59, 130, 246, 0.1)"
+                            fill="rgba(59, 130, 246, 0.05)" // softer layer highlight
                             rx={10}
-                            stroke="hsl(220, 70%, 50%)"
+                            stroke="hsl(220, 60%, 45%)"
                             strokeWidth={1}
                             strokeDasharray="5,5"
-                            opacity={0.3}
+                            opacity={0.4}
                           />
                           
                           {/* Nodes */}
@@ -1098,30 +1242,36 @@ export default function MLAlgorithms() {
                                     cy={y}
                                     r={25}
                                     fill="none"
-                                    stroke={isCurrentForward ? "hsl(120, 70%, 50%)" : "hsl(10, 70%, 50%)"}
+                                    stroke={isCurrentForward ? "hsl(190, 80%, 55%)" : "hsl(25, 85%, 55%)"} // cyan vs orange
                                     strokeWidth={3}
-                                    opacity={0.6}
+                                    opacity={0.7}
                                     className="animate-pulse"
                                   />
                                 )}
-                                
+
                                 {/* Main node */}
                                 <circle
                                   cx={x}
                                   cy={y}
                                   r={18}
-                                  fill={isCurrentForward ? "hsl(120, 70%, 85%)" : isCurrentBackward ? "hsl(10, 70%, 85%)" : "hsl(220, 70%, 90%)"}
-                                  stroke="hsl(220, 70%, 50%)"
+                                  fill={
+                                    isCurrentForward 
+                                      ? "hsla(30, 91%, 45%, 1.00)"   // forward → orange
+                                      : isCurrentBackward 
+                                        ? "hsla(109, 76%, 50%, 1.00)"  // backward → green
+                                        : "hsla(207, 6%, 62%, 1.00)" // default soft blue-gray
+                                  }
+                                  stroke="hsl(220, 40%, 40%)" // dark navy stroke
                                   strokeWidth={2}
                                   className="drop-shadow-md"
                                 />
-                                
+
                                 {/* Activation value */}
                                 <text
                                   x={x}
                                   y={y + 3}
                                   textAnchor="middle"
-                                  className="text-xs font-mono font-bold fill-foreground"
+                                  className="text-xs font-mono font-bold fill-gray-900 dark:fill-white"
                                 >
                                   {value.toFixed(2)}
                                 </text>
@@ -1132,9 +1282,21 @@ export default function MLAlgorithms() {
                                     x={x}
                                     y={y - 25}
                                     textAnchor="middle"
-                                    className="text-xs font-mono font-bold fill-red-600"
+                                    className="text-xs font-mono font-bold fill-red-600 dark:fill-red-400"
                                   >
                                     ∇{gradient.toFixed(3)}
+                                  </text>
+                                )}
+
+                                {/* Weight update indicator */}
+                                {isCurrentBackward && gradient !== 0 && (
+                                  <text
+                                    x={x + 35}
+                                    y={y + 3}
+                                    textAnchor="start"
+                                    className="text-xs font-mono font-bold fill-green-600 dark:fill-green-400"
+                                  >
+                                    Δw:{(0.001 * gradient).toFixed(4)}
                                   </text>
                                 )}
                               </g>
@@ -1146,7 +1308,7 @@ export default function MLAlgorithms() {
                             x={(layerIndex + 1) * 150}
                             y={20}
                             textAnchor="middle"
-                            className="text-sm font-semibold fill-foreground"
+                            className="text-sm font-semibold fill-gray-900 dark:fill-white"
                           >
                             {layerIndex === 0 ? "Input" : layerIndex === 3 ? "Output" : `Hidden ${layerIndex}`}
                           </text>
@@ -1168,39 +1330,55 @@ export default function MLAlgorithms() {
                                 currentBackpropStep === (7 - layerIndex - 1)
                               )
 
+                              // Simulate weight value for visualization
+                              const weight = Math.sin(fromNode + toNode + layerIndex) * 0.5
+
                               return (
-                                <line
-                                  key={`${fromNode}-${toNode}`}
-                                  x1={fromX + 18}
-                                  y1={fromY}
-                                  x2={toX - 18}
-                                  y2={toY}
-                                  stroke={isActive ? "hsl(220, 70%, 60%)" : "hsl(220, 30%, 70%)"}
-                                  strokeWidth={isActive ? 2 : 1}
-                                  opacity={isActive ? 0.8 : 0.3}
-                                  className={isActive ? "animate-pulse" : ""}
-                                />
+                                <g key={`${fromNode}-${toNode}`}>
+                                  <line
+                                    x1={fromX + 18}
+                                    y1={fromY}
+                                    x2={toX - 18}
+                                    y2={toY}
+                                    stroke={isActive ? "hsl(220, 80%, 55%)" : (weight > 0 ? "hsl(120, 50%, 50%)" : "hsl(0, 50%, 50%)")}
+                                    strokeWidth={isActive ? 3 : Math.abs(weight) * 2 + 1}
+                                    opacity={isActive ? 0.9 : 0.5}
+                                    className={isActive ? "animate-pulse" : ""}
+                                  />
+                                  
+                                  {/* Weight value display during backward pass */}
+                                  {isActive && currentBackpropStep > 3 && (
+                                    <text
+                                      x={(fromX + toX) / 2}
+                                      y={(fromY + toY) / 2 - 8}
+                                      textAnchor="middle"
+                                      className="text-xs font-mono font-bold fill-blue-600 dark:fill-blue-400"
+                                    >
+                                      w:{weight.toFixed(2)}
+                                    </text>
+                                  )}
+                                </g>
                               )
                             })
                           )}
                         </g>
                       ))}
 
-                      {/* Algorithm phase indicator */}
+                      {/* Algorithm phase indicator with enhanced metrics */}
                       <g transform="translate(50, 260)">
                         <rect
                           width={700}
                           height={30}
-                          fill="rgba(255,255,255,0.9)"
+                          fill="hsl(220, 25%, 15%)"
                           stroke="hsl(220, 70%, 50%)"
                           strokeWidth={1}
                           rx={5}
                         />
-                        <text x={20} y={20} className="text-sm font-semibold fill-foreground">
+                        <text x={20} y={20} className="text-sm font-semibold fill-white">
                           Step {currentBackpropStep + 1}/8: {
                             currentBackpropStep < 4 
                               ? `Forward Pass - Layer ${currentBackpropStep + 1}` 
-                              : `Backward Pass - Layer ${8 - currentBackpropStep}`
+                              : `Backward Pass - Layer ${8 - currentBackpropStep} (Computing Gradients)`
                           }
                         </text>
                         
@@ -1210,7 +1388,7 @@ export default function MLAlgorithms() {
                           y={8}
                           width={300}
                           height={14}
-                          fill="hsl(220, 20%, 90%)"
+                          fill="hsl(220, 10%, 30%)"
                           rx={7}
                         />
                         <rect
@@ -1218,14 +1396,53 @@ export default function MLAlgorithms() {
                           y={8}
                           width={(currentBackpropStep + 1) * 300 / 8}
                           height={14}
-                          fill="hsl(220, 70%, 50%)"
+                          fill="hsl(190, 80%, 55%)"
                           rx={7}
                           className="transition-all duration-300"
                         />
                       </g>
                     </svg>
                   </div>
-                )}
+
+                  {/* Additional Metrics Panel */}
+                  <div className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 rounded-lg p-4">
+                    <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Training Metrics</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                      <div>
+                        <span className="font-medium text-gray-700 dark:text-gray-300">Current Phase: </span>
+                        <span className="font-mono text-blue-600 dark:text-blue-400">
+                          {currentBackpropStep < 4 ? "Forward Propagation" : "Backward Propagation"}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="font-medium text-gray-700 dark:text-gray-300">Error Signal: </span>
+                        <span className="font-mono text-red-600 dark:text-red-400">
+                          {(() => {
+                            const step = backpropSteps.find(s => s.layer === 3 && s.type === "forward");
+                            const output = step?.values[0] || 0;
+                            const target = 0.8;
+                            return (output - target).toFixed(4);
+                          })()}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="font-medium text-gray-700 dark:text-gray-300">Convergence: </span>
+                        <span className="font-mono text-green-600 dark:text-green-400">
+                          {(() => {
+                            const step = backpropSteps.find(s => s.layer === 3 && s.type === "forward");
+                            const output = step?.values[0] || 0;
+                            const target = 0.8;
+                            const loss = Math.pow(output - target, 2);
+                            return loss < 0.01 ? "Good" : loss < 0.1 ? "Fair" : "Poor";
+                          })()}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+             
 
                 {/* DECISION TREE VISUALIZATION */}
                 {selectedAlgorithm === "forest" && (
@@ -1300,11 +1517,11 @@ export default function MLAlgorithms() {
                           ))}
 
                           {/* Legend */}
-                          <g transform="translate(10, 200)">
+                          <g transform="translate(1, 10)">
                             <rect
                               width={80}
                               height={45}
-                              fill="rgba(255,255,255,0.95)"
+                              fill="rgba(127, 127, 127, 0.95)"
                               stroke="hsl(220, 70%, 50%)"
                               strokeWidth={1}
                               rx={4}
