@@ -12,10 +12,9 @@ const dmSans = DM_Sans({
 })
 
 export const metadata: Metadata = {
-  title: "Neural Network Simulator | Advanced Educational Platform",
+  title: "NeuralSim",
   description:
     "Interactive neural network and brain function simulations for students and researchers in neuroscience and AI",
-  generator: "v0.app",
 }
 
 export default function RootLayout({

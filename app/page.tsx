@@ -13,22 +13,16 @@ export default function Dashboard() {
         <div className="container flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-2">
             <Brain className="h-8 w-8 text-primary" />
-            <h1 className="text-xl font-bold text-foreground">Neural Network Simulator</h1>
+            <h1 className="text-xl font-bold text-foreground">NeuralSim</h1>
           </div>
 
           <nav className="hidden md:flex items-center gap-6">
-            <Button variant="ghost" className="text-sm font-medium">
-              <Network className="h-4 w-4 mr-2" />
-              Simulations
-            </Button>
-            <Button variant="ghost" className="text-sm font-medium">
-              <BookOpen className="h-4 w-4 mr-2" />
-              Learn
-            </Button>
-            <Button variant="ghost" className="text-sm font-medium">
-              <Settings className="h-4 w-4 mr-2" />
-              Settings
-            </Button>
+            <Link href="/ann-simulation">
+              <Button variant="ghost" className="text-sm font-medium">
+                <Network className="h-4 w-4 mr-2" />
+                Simulations
+              </Button>
+            </Link>
             <ThemeToggle />
           </nav>
         </div>
@@ -99,30 +93,6 @@ export default function Dashboard() {
               </CardContent>
             </Card>
 
-            {/* Brain Functions */}
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-border">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <Cpu className="h-8 w-8 text-primary" />
-                  <Badge variant="secondary">Advanced</Badge>
-                </div>
-                <CardTitle className="text-foreground">Brain Function Modules</CardTitle>
-                <CardDescription>Comprehensive brain function simulations and cognitive processes</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ul className="text-sm text-muted-foreground space-y-1 mb-4">
-                  <li>• Visual processing</li>
-                  <li>• Audio processing</li>
-                  <li>• Motor functions</li>
-                  <li>• Cognitive demonstrations</li>
-                </ul>
-                <Link href="/brain-functions">
-                  <Button className="w-full">Launch Brain Functions</Button>
-                </Link>
-              </CardContent>
-            </Card>
-
-         
 
             {/* ML Algorithms */}
             <Card className="hover:shadow-lg transition-shadow cursor-pointer border-border">
