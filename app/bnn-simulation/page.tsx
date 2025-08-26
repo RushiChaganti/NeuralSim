@@ -85,8 +85,6 @@ export default function BNNSimulation() {
     const newSynapses: Synapse[] = []
 
     const neuronTypes: ("pyramidal" | "interneuron" | "motor")[] = ["pyramidal", "interneuron", "motor"]
-    const gridCols = 4
-    const gridRows = 3
     const cellWidth = 180
     const cellHeight = 120
     const startX = 80
@@ -94,8 +92,8 @@ export default function BNNSimulation() {
 
     for (let i = 0; i < 12; i++) {
       const type = neuronTypes[i % 3]
-      const col = i % gridCols
-      const row = Math.floor(i / gridCols)
+      const col = i % 4
+      const row = Math.floor(i / 4)
       const x = startX + col * cellWidth
       const y = startY + row * cellHeight
 
@@ -316,7 +314,12 @@ export default function BNNSimulation() {
     initializeNetwork()
   }
 
-  const filteredNeurons = selectedNeuronType === "all" ? neurons : neurons.filter((n) => n.type === selectedNeuronType)
+  const neuronTypeOptions = [
+    { value: "all", label: "All Types" },
+    { value: "pyramidal", label: "Pyramidal" },
+    { value: "interneuron", label: "Interneuron" },
+    { value: "motor", label: "Motor" },
+  ]
 
   return (
     <div className="min-h-screen bg-background">
@@ -390,15 +393,16 @@ export default function BNNSimulation() {
 
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Neuron Type Filter</label>
-                  <Select value={selectedNeuronType} onValueChange={(value: any) => setSelectedNeuronType(value)}>
+                  <Select value={selectedNeuronType} onValueChange={(value) => setSelectedNeuronType(value as "all" | "pyramidal" | "interneuron" | "motor")}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Types</SelectItem>
-                      <SelectItem value="pyramidal">Pyramidal</SelectItem>
-                      <SelectItem value="interneuron">Interneuron</SelectItem>
-                      <SelectItem value="motor">Motor</SelectItem>
+                      {neuronTypeOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>

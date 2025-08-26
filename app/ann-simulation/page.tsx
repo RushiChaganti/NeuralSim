@@ -39,14 +39,6 @@ const activationFunctions = {
   linear: (x: number) => x,
 }
 
-const activationDerivatives = {
-  sigmoid: (x: number) => x * (1 - x),
-  relu: (x: number) => (x > 0 ? 1 : 0),
-  tanh: (x: number) => 1 - x * x,
-  leaky_relu: (x: number) => (x > 0 ? 1 : 0.01),
-  linear: () => 1,
-}
-
 export default function ANNSimulation() {
   // Network architecture settings
   const [networkType, setNetworkType] = useState<"perceptron" | "multilayer">("multilayer")

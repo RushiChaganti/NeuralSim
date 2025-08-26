@@ -639,7 +639,7 @@ export default function MLAlgorithms() {
       previousCost: 0,
     })
     clearCanvas()
-  }, [selectedAlgorithm, generateData])
+  }, [selectedAlgorithm, generateData, clearCanvas])
 
   // Stop when max iterations reached
   useEffect(() => {
@@ -874,7 +874,7 @@ export default function MLAlgorithms() {
           <div className="lg:col-span-3">
             <Tabs 
                 value={selectedAlgorithm} 
-                onValueChange={(value: any) => !isRunning && setSelectedAlgorithm(value)} 
+                onValueChange={(value: unknown) => !isRunning && setSelectedAlgorithm(value as "linear" | "backprop" | "forest" | "cnn")} 
                 className="w-full mb-4"
               >
                 <TabsList className="grid w-full grid-cols-4">

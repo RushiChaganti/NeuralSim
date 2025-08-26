@@ -1,4 +1,4 @@
-import { Brain, Network, Cpu, Eye, Volume2, Zap, Settings, BookOpen } from "lucide-react"
+import { Brain, Network, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
