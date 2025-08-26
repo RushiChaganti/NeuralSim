@@ -40,6 +40,8 @@ jobs:
         run: npm run build
         
 
+      - name: Ensure output directory exists
+        run: mkdir -p ./out
       - name: Disable Jekyll (for GitHub Pages)
         run: touch ./out/.nojekyll  
 
