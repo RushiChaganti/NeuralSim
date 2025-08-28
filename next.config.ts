@@ -1,9 +1,11 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  /* config options here */
-  basePath: '/NeuralSim',
-  output: 'export',
+// next.config.js
+const nextConfig = {
+  output: "export",
+  basePath: "/NeuralSim",    // repo name
+  assetPrefix: "/NeuralSim/", 
+  images: {
+    unoptimized: true,       // GitHub Pages can’t handle next/image optimization
+  },
 };
 
-export default nextConfig;
+module.exports = nextConfig;

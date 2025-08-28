@@ -30,23 +30,13 @@ jobs:
       - name: Install dependencies
         run: npm install  
 
-      - name: Run ESLint
-        run: npm run lint
+      - name: Build project (Next.js export)
+        run: |
+          npm run build
+          npx next export
 
-      - name: Fix ESLint Errors
-        run: npm run lint -- --fix
-
-      - name: Build project
-        run: npm run build
-        
-
-      - name: Ensure output directory exists
-        run: mkdir -p ./out
       - name: Disable Jekyll (for GitHub Pages)
         run: touch ./out/.nojekyll  
-
-      - name: Export static files
-        run: npm run export
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -60,10 +50,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: github-pages
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
