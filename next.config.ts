@@ -2,10 +2,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "export",
- basePath: "/neuralsim",
- assetPrefix: "/neuralsim/",
+  basePath: "/NeuralSim",        // 👈 uppercase N, S
+  assetPrefix: "/NeuralSim/",    // 👈 uppercase N, S
   images: {
-    unoptimized: true,           // needed for next/image in static export
+    unoptimized: true,
   },
 };
 
