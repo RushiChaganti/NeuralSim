@@ -30,10 +30,9 @@ jobs:
       - name: Install dependencies
         run: npm install  
 
-      - name: Build project (Next.js export)
-        run: |
-          npm run build
-          npx next export
+      - name: Build project
+        run: npm run build
+
 
       - name: Disable Jekyll (for GitHub Pages)
         run: touch ./out/.nojekyll  
