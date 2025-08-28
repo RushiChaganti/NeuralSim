@@ -1,10 +1,10 @@
-// next.config.js
 const nextConfig = {
   output: "export",
-  basePath: "/NeuralSim",    // repo name
-  assetPrefix: "/NeuralSim/", 
+  basePath: "/NeuralSim",   // important for GH Pages
+  assetPrefix: "/NeuralSim/",
+  trailingSlash: true,      // 🔑 ensures static files get written as /page/index.html
   images: {
-    unoptimized: true,       // GitHub Pages can’t handle next/image optimization
+    unoptimized: true,
   },
 };
 

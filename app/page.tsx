@@ -17,7 +17,7 @@ export default function Dashboard() {
           </div>
 
           <nav className="hidden md:flex items-center gap-6">
-            <Link href="/ann-simulation">
+            <Link href="/">
               <Button variant="ghost" className="text-sm font-medium">
                 <Network className="h-4 w-4 mr-2" />
                 Simulations
