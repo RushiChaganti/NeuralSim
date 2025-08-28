@@ -1,11 +1,9 @@
-const nextConfig = {
-  output: "export",
-  basePath: "/NeuralSim",   // important for GH Pages
-  assetPrefix: "/NeuralSim/",
-  trailingSlash: true,      // 🔑 ensures static files get written as /page/index.html
+const isProd = process.env.NODE_ENV === 'production'
+
+module.exports = {
+  output: 'export',   // enable static export
+  basePath: isProd ? '/NeuralSim' : '',
   images: {
     unoptimized: true,
   },
-};
-
-module.exports = nextConfig;
+}
