@@ -45,6 +45,7 @@ export default function Dashboard() {
         <section className="mb-12">
           <h3 className="text-2xl font-semibold text-foreground mb-6">Simulation Categories</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+           
             {/* ANN Simulations */}
             <Card className="hover:shadow-lg transition-shadow cursor-pointer border-border">
               <CardHeader>
@@ -64,7 +65,7 @@ export default function Dashboard() {
                   <li>• Activation function demos</li>
                   <li>• Performance metrics</li>
                 </ul>
-                <Link href="/ann-simulation">
+                <Link href="/ann-simulation/">
                   <Button className="w-full">Launch ANN Simulator</Button>
                 </Link>
               </CardContent>
@@ -87,7 +88,7 @@ export default function Dashboard() {
                   <li>• Synaptic connections</li>
                   <li>• Dendrite interactions</li>
                 </ul>
-                <Link href="/bnn-simulation">
+                <Link href="/bnn-simulation/">
                   <Button className="w-full">Launch BNN Simulator</Button>
                 </Link>
               </CardContent>
@@ -111,9 +112,9 @@ export default function Dashboard() {
                   <li>• CNN architectures</li>
                   <li>• Linear regression</li>
                 </ul>
-                <Link href="/ml-algorithms">
-                  <Button className="w-full">Launch ML Algorithms</Button>
-                </Link>
+               <Link href="/ml-algorithms/">
+                <Button className="w-full">Launch ML Algorithms</Button>
+              </Link>
               </CardContent>
             </Card>
           </div>

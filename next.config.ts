@@ -1,9 +1,7 @@
-const isProd = process.env.NODE_ENV === 'production'
+// next.config.js
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: "export", // replaces next export
+};
 
-module.exports = {
-  output: 'export',   // enable static export
-  basePath: isProd ? '/NeuralSim' : '',
-  images: {
-    unoptimized: true,
-  },
-}
+module.exports = nextConfig;

@@ -3,7 +3,6 @@ import type { Metadata } from "next"
 import { DM_Sans } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 import "./globals.css"
-import { getAssetPath } from "@/lib/utils"
 const dmSans = DM_Sans({
   subsets: ["latin"],
   display: "swap",
@@ -15,12 +14,13 @@ export const metadata: Metadata = {
   title: "NeuralSim",
   description:
     "Interactive neural network and brain function simulations for students and researchers in neuroscience and AI",
-     icons: {
-    icon: getAssetPath('/brain.ico'),
-    shortcut: getAssetPath('/brain.ico'),
-    apple: getAssetPath('/brain.ico'),
+  icons: {
+    icon: "/brain.ico",
+    shortcut: "/brain.ico",
+    apple: "/brain.ico",
   },
 }
+
 
 export default function RootLayout({
   children,

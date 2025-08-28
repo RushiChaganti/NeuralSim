@@ -1,1 +1,101 @@
-<meta http-equiv="refresh" content="0; url=/NeuralSim/" />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>404 - Page Not Found</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .container {
+      text-align: center;
+      animation: fadeIn 2s ease;
+    }
+    h1 {
+      font-size: 6rem;
+      margin: 0;
+      background: linear-gradient(45deg, #ff6ec4, #7873f5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    p {
+      font-size: 1.3rem;
+      margin: 1rem 0 2rem;
+    }
+    a {
+      text-decoration: none;
+      padding: 12px 24px;
+      background: #ff6ec4;
+      color: white;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+    a:hover {
+      background: #ff3fa6;
+    }
+    .planet {
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #f5af19, #f12711);
+      top: 10%;
+      left: 10%;
+      animation: float 6s ease-in-out infinite;
+    }
+    .ufo {
+      position: absolute;
+      width: 120px;
+      height: 60px;
+      background: #ccc;
+      border-radius: 60px / 30px;
+      top: 70%;
+      right: 15%;
+      animation: fly 8s linear infinite;
+    }
+    .ufo::before {
+      content: "";
+      position: absolute;
+      top: -20px;
+      left: 20px;
+      width: 80px;
+      height: 30px;
+      background: #888;
+      border-radius: 40px / 15px;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+    @keyframes fly {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-120vw); }
+    }
+  </style>
+</head>
+<body>
+  <div class="planet"></div>
+  <div class="ufo"></div>
+  <div class="container">
+    <h1>404</h1>
+    <p>Oops! Looks like you drifted into space.<br/>The page you’re looking for doesn’t exist.</p>
+    <a href="/">Take Me Home</a>
+  </div>
+</body>
+</html>

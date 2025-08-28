@@ -171,8 +171,22 @@ const recognizeDigit = (data: number[][]): number[] => {
 
 // --- END: New Digit Recognition Logic ---
 
+// SEEDED RANDOM GENERATOR to ensure consistent values between server and client
+let seedValue = 12345;
+
+function seededRandom() {
+  const x = Math.sin(seedValue++) * 10000;
+  return x - Math.floor(x);
+}
+
+function resetSeed() {
+  seedValue = 12345;
+}
 
 export default function MLAlgorithms() {
+  // Add client-side hydration flag
+  const [isClient, setIsClient] = useState(false)
+
   // Simulation state
   const [isRunning, setIsRunning] = useState(false)
   const [selectedAlgorithm, setSelectedAlgorithm] = useState<"linear" | "backprop" | "forest" | "cnn">("linear")
@@ -183,8 +197,8 @@ export default function MLAlgorithms() {
   // Algorithm-specific states
   const [dataPoints, setDataPoints] = useState<DataPoint[]>([])
   const [linearRegression, setLinearRegression] = useState<LinearRegressionState>({
-    slope: Math.random() - 0.5,
-    intercept: Math.random() - 0.5,
+    slope: 0,
+    intercept: 0,
     cost: 0,
     iteration: 0,
     previousCost: 0,
@@ -201,18 +215,35 @@ export default function MLAlgorithms() {
     Array(28).fill(0).map(() => Array(28).fill(0))
   )
 
+  // Initialize client-side hydration flag
+  useEffect(() => {
+    setIsClient(true)
+    // Initialize with seeded random values on client side only
+    resetSeed()
+    setLinearRegression({
+      slope: seededRandom() - 0.5,
+      intercept: seededRandom() - 0.5,
+      cost: 0,
+      iteration: 0,
+      previousCost: 0,
+    })
+  }, [])
+
   // Generate sample data with better distribution
   const generateData = useCallback(() => {
+    if (!isClient) return // Don't generate data on server side
+    
+    resetSeed() // Reset seed for consistent data generation
     const points: DataPoint[] = []
 
     switch (selectedAlgorithm) {
       case "linear":
         // Generate linear regression data with clear trend
-        const trueSlope = 2 + Math.random()
-        const trueIntercept = 1 + Math.random() * 2
+        const trueSlope = 2 + seededRandom()
+        const trueIntercept = 1 + seededRandom() * 2
         for (let i = 0; i < 50; i++) {
-          const x = Math.random() * 10
-          const y = trueSlope * x + trueIntercept + (Math.random() - 0.5) * 2
+          const x = seededRandom() * 10
+          const y = trueSlope * x + trueIntercept + (seededRandom() - 0.5) * 2
           points.push({ x, y })
         }
         break
@@ -220,8 +251,8 @@ export default function MLAlgorithms() {
       case "backprop":
         // Generate XOR-like classification data
         for (let i = 0; i < 100; i++) {
-          const x = Math.random() * 10
-          const y = Math.random() * 10
+          const x = seededRandom() * 10
+          const y = seededRandom() * 10
           const label = (x > 5) !== (y > 5) ? 1 : 0 // XOR pattern
           points.push({ x, y, label })
         }
@@ -237,8 +268,8 @@ export default function MLAlgorithms() {
         
         clusters.forEach(cluster => {
           for (let i = 0; i < 40; i++) {
-            const angle = Math.random() * 2 * Math.PI
-            const radius = Math.random() * 2
+            const angle = seededRandom() * 2 * Math.PI
+            const radius = seededRandom() * 2
             const x = cluster.centerX + Math.cos(angle) * radius
             const y = cluster.centerY + Math.sin(angle) * radius
             points.push({ 
@@ -292,7 +323,7 @@ export default function MLAlgorithms() {
     }
 
     setDataPoints(points)
-  }, [selectedAlgorithm])
+  }, [selectedAlgorithm, isClient])
 
   // Improved decision tree building
   const buildDecisionTree = useCallback((data: DataPoint[], depth = 0, maxDepth = 3): DecisionNode => {
@@ -307,7 +338,7 @@ export default function MLAlgorithms() {
       , "0"))
       
       return {
-        id: `leaf-${Math.random()}`,
+        id: `leaf-${depth}-${data.length}`,
         feature: "leaf",
         threshold: 0,
         prediction,
@@ -326,8 +357,8 @@ export default function MLAlgorithms() {
         const rightData = data.filter(d => d[feature as keyof DataPoint] as number >= threshold)
         
         if (leftData.length > 0 && rightData.length > 0) {
-          // Simple information gain calculation
-          const gain = Math.random() // Simplified for visualization
+          // Simple information gain calculation (deterministic)
+          const gain = Math.abs(leftData.length - rightData.length) / data.length
           if (gain > bestSplit.gain) {
             bestSplit = { feature, threshold, gain }
           }
@@ -349,7 +380,7 @@ export default function MLAlgorithms() {
       , "0"))
       
       return {
-        id: `leaf-${Math.random()}`,
+        id: `leaf-${depth}-${data.length}`,
         feature: "leaf",
         threshold: 0,
         prediction,
@@ -359,7 +390,7 @@ export default function MLAlgorithms() {
     }
 
     return {
-      id: `node-${Math.random()}`,
+      id: `node-${depth}-${bestSplit.feature}-${bestSplit.threshold}`,
       feature: bestSplit.feature,
       threshold: bestSplit.threshold,
       left: buildDecisionTree(leftData, depth + 1, maxDepth),
@@ -409,13 +440,16 @@ export default function MLAlgorithms() {
         const networkLayers = [2, 4, 4, 1]
         const newSteps: BackpropStep[] = []
 
+        // Use deterministic values based on iteration count
+        const iterationSeed = iterations + 1
+
         // Forward pass with realistic activations
         networkLayers.forEach((layerSize, layerIndex) => {
-          const values = Array(layerSize).fill(0).map(() => {
+          const values = Array(layerSize).fill(0).map((_, idx) => {
             if (layerIndex === 0) {
-              return Math.random() * 0.8 + 0.1 // Input layer
+              return 0.1 + (Math.sin(iterationSeed + idx) + 1) * 0.4 // Input layer
             } else {
-              return Math.max(0, Math.random() - 0.3) // ReLU-like activation
+              return Math.max(0, (Math.sin(iterationSeed + idx + layerIndex) + 1) * 0.5 - 0.3) // ReLU-like activation
             }
           })
           
@@ -424,9 +458,9 @@ export default function MLAlgorithms() {
             type: "forward",
             values,
             weights: layerIndex < networkLayers.length - 1 ? 
-              Array(layerSize).fill(0).map(() => 
-                Array(networkLayers[layerIndex + 1]).fill(0).map(() => 
-                  (Math.random() - 0.5) * 0.5
+              Array(layerSize).fill(0).map((_, i) => 
+                Array(networkLayers[layerIndex + 1]).fill(0).map((_, j) => 
+                  Math.sin(i + j + layerIndex) * 0.25
                 )
               ) : undefined
           })
@@ -434,8 +468,8 @@ export default function MLAlgorithms() {
 
         // Backward pass with gradients
         for (let i = networkLayers.length - 1; i >= 0; i--) {
-          const gradients = Array(networkLayers[i]).fill(0).map(() => 
-            Math.random() * 0.2 * (1 - Math.random() * 0.5)
+          const gradients = Array(networkLayers[i]).fill(0).map((_, idx) => 
+            Math.sin(iterationSeed + idx + i) * 0.1
           )
           
           const existingStep = newSteps.find(s => s.layer === i && s.type === "forward")
@@ -476,7 +510,7 @@ export default function MLAlgorithms() {
         for (let ki = 0; ki < 3; ki++) {
           for (let kj = 0; kj < 3; kj++) {
             if (i + ki < 28 && j + kj < 28) {
-              sum += inputData[i + ki][j + kj] * (Math.random() - 0.5) // Simplified filter
+              sum += inputData[i + ki][j + kj] * (Math.sin(i + j + ki + kj) * 0.5) // Deterministic filter
             }
           }
         }
@@ -496,7 +530,7 @@ export default function MLAlgorithms() {
       })
     )
 
-    // --- THIS IS THE FIX: Use the new recognition logic ---
+    // Use the new recognition logic
     const normalizedPredictions = recognizeDigit(inputData)
 
     setCnnLayers([
@@ -619,27 +653,30 @@ export default function MLAlgorithms() {
   useEffect(() => {
     let interval: NodeJS.Timeout
 
-    if (isRunning) {
+    if (isRunning && isClient) {
       interval = setInterval(runAlgorithmStep, selectedAlgorithm === "backprop" ? 300 : 200)
     }
 
     return () => clearInterval(interval)
-  }, [isRunning, runAlgorithmStep, selectedAlgorithm])
+  }, [isRunning, runAlgorithmStep, selectedAlgorithm, isClient])
 
-  // Initialize data when algorithm changes
+  // Initialize data when algorithm changes (only on client side)
   useEffect(() => {
-    generateData()
-    setIterations(0)
-    setCurrentBackpropStep(0)
-    setLinearRegression({
-      slope: Math.random() - 0.5,
-      intercept: Math.random() - 0.5,
-      cost: 0,
-      iteration: 0,
-      previousCost: 0,
-    })
-    clearCanvas()
-  }, [selectedAlgorithm, generateData, clearCanvas])
+    if (isClient) {
+      generateData()
+      setIterations(0)
+      setCurrentBackpropStep(0)
+      resetSeed()
+      setLinearRegression({
+        slope: seededRandom() - 0.5,
+        intercept: seededRandom() - 0.5,
+        cost: 0,
+        iteration: 0,
+        previousCost: 0,
+      })
+      clearCanvas()
+    }
+  }, [selectedAlgorithm, generateData, isClient])
 
   // Stop when max iterations reached
   useEffect(() => {
@@ -650,10 +687,10 @@ export default function MLAlgorithms() {
 
   // Initialize canvas
   useEffect(() => {
-    if (selectedAlgorithm === "cnn" && canvasRef.current) {
+    if (selectedAlgorithm === "cnn" && canvasRef.current && isClient) {
       drawCanvas(drawingData)
     }
-  }, [selectedAlgorithm, drawingData])
+  }, [selectedAlgorithm, drawingData, isClient])
 
   const toggleSimulation = () => {
     setIsRunning(!isRunning)
@@ -664,9 +701,10 @@ export default function MLAlgorithms() {
     setIterations(0)
     setCurrentBackpropStep(0)
     generateData()
+    resetSeed()
     setLinearRegression({
-      slope: Math.random() - 0.5,
-      intercept: Math.random() - 0.5,
+      slope: seededRandom() - 0.5,
+      intercept: seededRandom() - 0.5,
       cost: 0,
       iteration: 0,
       previousCost: 0,
@@ -684,6 +722,18 @@ export default function MLAlgorithms() {
       "hsl(120, 70%, 50%)", // Green
     ]
     return colors[label] || colors[0]
+  }
+
+  // Show loading state on server side or until client hydrated
+  if (!isClient) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading ML Visualizations...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -1662,4 +1712,6 @@ export default function MLAlgorithms() {
       </div>
     </div>
   )
+  
 }
+export const dynamic = "force-static";
