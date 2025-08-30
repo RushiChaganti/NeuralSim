@@ -15,9 +15,9 @@ export const metadata: Metadata = {
   description:
     "Interactive neural network and brain function simulations for students and researchers in neuroscience and AI",
   icons: {
-    icon: "/brain.ico",
-    shortcut: "/brain.ico",
-    apple: "/brain.ico",
+    icon: "brain.ico",
+    shortcut: "brain.ico",
+    apple: "brain.ico",
   },
 }
 
